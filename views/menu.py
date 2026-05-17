@@ -17,6 +17,7 @@ from bloque_14.unpacking import start_fourteen
 from bloque_15.function_superior import start_fifteen
 from bloque_16.files_and_json import start_sixteen
 from bloque_17.mixins import start_seventeen
+from .menu_ia import IAExamplesMenu
 import sys
 
 
@@ -32,12 +33,12 @@ class Menu:
             ConsoleUtils.print_header(symbol * 40)
             ConsoleUtils.print_header(f" {title} ")
             ConsoleUtils.print_header(symbol * 40)
-            for i, opt in enumerate(options, start=0):
+            for i, opt in enumerate(options, start=1):
                 print(f"{i}. {opt['label']}")
             try:
                 option = int(input("Ingrese una Opción: "))
-                if 0 <= option < len(options):
-                    action = options[option]["action"]
+                if 1 <= option <= len(options):
+                    action = options[option - 1]["action"]
                     if action == "break":
                         break
                     elif action == "exit":
@@ -57,7 +58,10 @@ class Menu:
             [
                 {"label": "Ejercicios Bloque 0 (Intro)", "action": start},
                 {"label": "Ejercicios Bloque 1 (Variables)", "action": start_one},
-                {"label": "Ejercicios Bloque 2 (Condiciones básicas)", "action": start_two},
+                {
+                    "label": "Ejercicios Bloque 2 (Condiciones básicas)",
+                    "action": start_two,
+                },
                 {"label": "Ejercicios Bloque 3 (Operadores)", "action": start_three},
                 {"label": "Ejercicios Bloque 4 (Entrada/Salida)", "action": start_four},
                 {"label": "Ejercicios Bloque 5 (Condicionales)", "action": start_five},
@@ -68,14 +72,27 @@ class Menu:
                 {"label": "Ejercicios Bloque 10 (Diccionarios)", "action": start_ten},
                 {"label": "Ejercicios Bloque 11 (Conjuntos)", "action": start_eleven},
                 {"label": "Ejercicios Bloque 12 (Excepciones)", "action": start_twelve},
-                {"label": "Ejercicios Bloque 13 (Decoradores)", "action": start_thirteen},
+                {
+                    "label": "Ejercicios Bloque 13 (Decoradores)",
+                    "action": start_thirteen,
+                },
                 {"label": "Ejercicios Bloque 14 (Unpacking)", "action": start_fourteen},
-                {"label": "Ejercicios Bloque 15 (Funciones de orden superior)", "action": start_fifteen},
-                {"label": "Ejercicios Bloque 16 (Archivos y JSON)", "action": start_sixteen},
+                {
+                    "label": "Ejercicios Bloque 15 (Funciones de orden superior)",
+                    "action": start_fifteen,
+                },
+                {
+                    "label": "Ejercicios Bloque 16 (Archivos y JSON)",
+                    "action": start_sixteen,
+                },
                 {"label": "Ejercicios Bloque 17 (Mixins)", "action": start_seventeen},
+                {"label": "Ejemplos_IA", "action": self.show_ia_examples},
                 {"label": "Salir", "action": "exit"},
-            ]
+            ],
         )
+
+    def show_ia_examples(self):
+        IAExamplesMenu().optionMenu()
 
 
 def safe_action(action, *args, **kwargs):
