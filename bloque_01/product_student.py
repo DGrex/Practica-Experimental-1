@@ -35,7 +35,7 @@ class Student:
 
 
 @separator_decorator("Ejercicios Bloque 1")
-def start_two():
+def start_one():
     print("\n--Instancias de Productos--")
     try:
         product_one = Product("P001", "Laptop", 662.257)
