@@ -33,12 +33,12 @@ class Menu:
             ConsoleUtils.print_header(symbol * 40)
             ConsoleUtils.print_header(f" {title} ")
             ConsoleUtils.print_header(symbol * 40)
-            for i, opt in enumerate(options, start=1):
+            for i, opt in enumerate(options, start=0):
                 print(f"{i}. {opt['label']}")
             try:
                 option = int(input("Ingrese una Opción: "))
-                if 1 <= option <= len(options):
-                    action = options[option - 1]["action"]
+                if 0 <= option <= len(options):
+                    action = options[option]["action"]
                     if action == "break":
                         break
                     elif action == "exit":
