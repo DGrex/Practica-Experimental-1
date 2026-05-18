@@ -28,15 +28,18 @@ class IAExamplesMenu:
     def show_menu(self, title: str, options: list[dict], symbol: str = "="):
         while True:
             ConsoleUtils.clear_screen()
-            ConsoleUtils.gotoxy(1, 1)
-            ConsoleUtils.print_header(symbol * 40)
-            ConsoleUtils.print_header(f" {title} ")
-            ConsoleUtils.print_header(symbol * 40)
+
+            # Prepare menu lines
+            menu_lines = []
             for i, opt in enumerate(options, start=0):
-                print(f"{i}. {opt['label']}") 
+                menu_lines.append(f"{i}. {opt['label']}")
+
+            # Print the box with menu
+            ConsoleUtils.print_box(title, menu_lines)
+
             try:
-                option = int(input("Ingrese una opción: "))
-                if 0 <= option <= len(options):
+                option = int(input("\nIngrese una opción: "))
+                if 0 <= option < len(options):
                     action = options[option]["action"]
                     if action == "break":
                         break
