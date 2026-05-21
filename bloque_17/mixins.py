@@ -1,6 +1,8 @@
 import re
 import json
+from pathlib import Path
 from core import separator_decorator
+
 
 @separator_decorator("Bloque 17 'Mixins'")
 def start_seventeen():
@@ -24,12 +26,12 @@ def start_seventeen():
 
     print("--AverageMixin--")
     student = Student("Gabriela", [8, 9, 10])
-    student.show_average()   # El promedio de Gabriela es 9.0
+    student.show_average()  # El promedio de Gabriela es 9.0
 
     # 2. Validación con ValidationMixin
     class ValidationMixin:
         def validate_email(self, email: str) -> bool:
-            pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+            pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
             return re.match(pattern, email) is not None
 
     class User(ValidationMixin):
@@ -58,7 +60,7 @@ def start_seventeen():
     # 3. Exportación con ExportMixin
     class ExportMixin:
         def export_json(self, data: list[dict]) -> str:
-            return json.dumps(data, indent=4)
+            return json.dumps(data, indent=4, ensure_ascii=False)
 
         def export_csv(self, data: list[dict]) -> str:
             if not data:
@@ -68,6 +70,18 @@ def start_seventeen():
             for d in data:
                 lines.append(",".join(str(d[h]) for h in headers))
             return "\n".join(lines)
+
+        def save_json_file(self, data: list[dict], file_path: Path | str) -> None:
+            path = Path(file_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+
+        def save_csv_file(self, data: list[dict], file_path: Path | str) -> None:
+            path = Path(file_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(self.export_csv(data))
 
     class Report(ExportMixin):
         def __init__(self, data: list[dict]):
@@ -80,9 +94,14 @@ def start_seventeen():
             print("\nCSV:")
             print(self.export_csv(self.data))
 
+            output_folder = Path("bloque_17/data")
+            self.save_json_file(self.data, output_folder / "report.json")
+            self.save_csv_file(self.data, output_folder / "report.csv")
+            print(f"\nArchivos guardados en: {output_folder.resolve()}")
+
     sales = [
         {"producto": "Laptop", "precio": 1200},
-        {"producto": "Mouse", "precio": 25}
+        {"producto": "Mouse", "precio": 25},
     ]
     report = Report(sales)
     report.show_exports()

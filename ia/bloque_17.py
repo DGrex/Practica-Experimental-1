@@ -1,5 +1,8 @@
+import csv
 import json
 import re
+from io import StringIO
+from pathlib import Path
 from core import separator_decorator
 
 
@@ -49,16 +52,31 @@ def run_example():
 
     class ExportMixin:
         def export_json(self, data: list[dict]) -> str:
-            return json.dumps(data, indent=2)
+            return json.dumps(data, indent=2, ensure_ascii=False)
 
         def export_csv(self, data: list[dict]) -> str:
             if not data:
                 return ""
-            headers = data[0].keys()
-            lines = [",".join(headers)]
-            for row in data:
-                lines.append(",".join(str(row[h]) for h in headers))
-            return "\n".join(lines)
+            headers = list(data[0].keys())
+            output = StringIO()
+            writer = csv.DictWriter(output, fieldnames=headers)
+            writer.writeheader()
+            writer.writerows(data)
+            return output.getvalue()
+
+        def save_json_file(self, data: list[dict], file_path: Path | str) -> None:
+            path = Path(file_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "w", encoding="utf-8") as file:
+                json.dump(data, file, indent=2, ensure_ascii=False)
+
+        def save_csv_file(self, data: list[dict], file_path: Path | str) -> None:
+            path = Path(file_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "w", encoding="utf-8", newline="") as file:
+                writer = csv.DictWriter(file, fieldnames=list(data[0].keys()))
+                writer.writeheader()
+                writer.writerows(data)
 
     class Report(ExportMixin):
         def __init__(self, data: list[dict]):
@@ -69,6 +87,11 @@ def run_example():
             print(self.export_json(self.data))
             print("CSV exportado:")
             print(self.export_csv(self.data))
+
+            output_folder = Path("ia/data")
+            self.save_json_file(self.data, output_folder / "ia_report.json")
+            self.save_csv_file(self.data, output_folder / "ia_report.csv")
+            print(f"\nArchivos guardados en: {output_folder.resolve()}")
 
     report = Report([{"producto": "Lapiz", "precio": 1.20}])
     report.show()
